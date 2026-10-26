@@ -93,7 +93,7 @@ function init(){
 
 function createDeckSlots(){
 	let wPerc=10;
-	let hView=18;
+	let hView=17.875;
 
 	for(let i=0;i<40;i++){
 		let indexRow=parseInt(i/10);
@@ -115,7 +115,7 @@ function createPoolSlots(){
 	let nRow=parseInt(pool.length/3)+(parseInt(pool.length%3)==0?0:1);
 
 	let wPerc=32.1;
-	let hView=18;
+	let hView=17.875;
 	
 	p3p1p1.style.height=(nRow*hView)+'vh';
 
@@ -152,13 +152,14 @@ function implementDragAndDrop(){
 
 			let x=poolSlots[i].getBoundingClientRect().left;
 			let y=poolSlots[i].getBoundingClientRect().top;
+			let w=poolSlots[i].getBoundingClientRect().width;
 			let h=poolSlots[i].getBoundingClientRect().height;
 
 			ux=ev.offsetX;
 			uy=ev.offsetY+h*.1;
 
-			imdd.style.left=x+'px';
-			imdd.style.top=(y-h*.1)+'px';
+			imdd.style.left=(x+.02*w)+'px';
+			imdd.style.top=(y+h*.02-h*.1)+'px';
 
 			imddCard=poolSlots[i].card;
 			imdd.src='files/pics_mod/'+imddCard.passcode+'.jpg';
@@ -180,13 +181,14 @@ function implementDragAndDrop(){
 			let x_=deckSlots[i].getBoundingClientRect().left;
 			let y_=deckSlots[i].getBoundingClientRect().top;
 
+			let w_=poolSlots[i].getBoundingClientRect().width;
 			let h_=deckSlots[i].getBoundingClientRect().height;
 
 			ux=ev.offsetX;
 			uy=ev.offsetY+h_*.1;
 
-			imdd.style.left=x_+'px';
-			imdd.style.top=(y_-h_*.1)+'px';
+			imdd.style.left=(x_+.02*w_)+'px';
+			imdd.style.top=(y_+h_*.02-h_*.1)+'px';
 
 			imddCard=deckSlots[i].card;
 			imdd.src='files/pics_mod/'+imddCard.passcode+'.jpg';
