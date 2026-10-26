@@ -28,6 +28,10 @@ let p5bt3=document.getElementById('p5bt3');
 let p5bt4=document.getElementById('p5bt4');
 let p5bt5=document.getElementById('p5bt5');
 let imdd=document.getElementById('imdd');
+let cd=document.getElementById('cd');
+let cdim1=document.getElementById('cdim1');
+let cdta1=document.getElementById('cdta1');
+let cdbt1=document.getElementById('cdbt1');
 
 let pool;
 let poolSlots=[];
@@ -78,6 +82,7 @@ function init(){
 		implementDragAndDrop();
 		implementFilter();
 		implementButtons();
+		implementCardDisplay();
 
 		sortPool();
 		applyFilter();
@@ -141,6 +146,10 @@ function implementDragAndDrop(){
 		poolSlots[i].setOnMouseDown(ev=>{
 			ev.preventDefault();
 
+			if(ev.button!==0){
+				return;
+			}
+
 			let x=poolSlots[i].getBoundingClientRect().left;
 			let y=poolSlots[i].getBoundingClientRect().top;
 			let h=poolSlots[i].getBoundingClientRect().height;
@@ -163,6 +172,10 @@ function implementDragAndDrop(){
 	for(let i=0;i<deckSlots.length;i++){
 		deckSlots[i].setOnMouseDown(ev=>{
 			ev.preventDefault();
+
+			if(ev.button!==0){
+				return;
+			}
 
 			let x_=deckSlots[i].getBoundingClientRect().left;
 			let y_=deckSlots[i].getBoundingClientRect().top;
@@ -199,58 +212,58 @@ function implementDragAndDrop(){
 			removeFromDeck(index);
 		});
 	}
-}
 
-document.addEventListener('mousemove',ev=>{
-	if(!flagDragging){
-		return;
-	}
-
-	let x=ev.clientX-ux;
-	let y=ev.clientY-uy;
-
-	imdd.style.left=x+'px';
-	imdd.style.top=y+'px';
-});
-
-document.addEventListener('mouseup',ev=>{
-	if(ev.button!=0){
-		return;
-	}
-
-	if(imdd.hidden){
-		return;
-	}
-
-	let xc1=p2p1.getBoundingClientRect().left;
-	let yc1=p2p1.getBoundingClientRect().top;
-	
-	let w=p2p1.getBoundingClientRect().width;
-	let h=p2p1.getBoundingClientRect().height;
-
-	let xc2=xc1+w;
-	let yc2=yc1+h;
-
-	let x=ev.clientX;
-	let y=ev.clientY;
-
-	if(x>xc1 && x<xc2 && y>yc1 && y<yc2){
-		let indexCol=parseInt((x-xc1)/(w/10));
-		let indexRow=parseInt((y-yc1)/(h/4));
-
-		let index=indexRow*10+indexCol;
-
-		if(index>deck.length){
-			index=deck.length;
+	document.addEventListener('mousemove',ev=>{
+		if(!flagDragging){
+			return;
 		}
 
-		addToDeck(index,imddCard);
-	}
+		let x=ev.clientX-ux;
+		let y=ev.clientY-uy;
 
-	flagDragging=false;
-	document.body.style.cursor='default';
-	imdd.hidden=true;
-});
+		imdd.style.left=x+'px';
+		imdd.style.top=y+'px';
+	});
+
+	document.addEventListener('mouseup',ev=>{
+		if(ev.button!=0){
+			return;
+		}
+
+		if(imdd.hidden){
+			return;
+		}
+
+		let xc1=p2p1.getBoundingClientRect().left;
+		let yc1=p2p1.getBoundingClientRect().top;
+		
+		let w=p2p1.getBoundingClientRect().width;
+		let h=p2p1.getBoundingClientRect().height;
+
+		let xc2=xc1+w;
+		let yc2=yc1+h;
+
+		let x=ev.clientX;
+		let y=ev.clientY;
+
+		if(x>xc1 && x<xc2 && y>yc1 && y<yc2){
+			let indexCol=parseInt((x-xc1)/(w/10));
+			let indexRow=parseInt((y-yc1)/(h/4));
+
+			let index=indexRow*10+indexCol;
+
+			if(index>deck.length){
+				index=deck.length;
+			}
+
+			addToDeck(index,imddCard);
+		}
+
+		flagDragging=false;
+		document.body.style.cursor='default';
+		imdd.hidden=true;
+	});
+}
 
 function addToDeck(index,c){
 	if(deck.length==40){
@@ -736,6 +749,53 @@ function uploadDeck(file){
 	});
 
 	fr.readAsText(file);
+}
+
+function implementCardDisplay(){
+	/* pool */
+	for(let s of poolSlots){
+		s.setOnContextMenu(ev=>{
+			ev.preventDefault();
+			displayCard(s.card);
+		});
+	}
+
+	/* deck */
+	for(let s of deckSlots){
+		s.setOnContextMenu(ev=>{
+			ev.preventDefault();
+			displayCard(s.card);
+		});
+	}
+
+	/* card display */
+	cdbt1.addEventListener('click',ev=>{
+		cd.hidden=true;
+	});
+}
+
+function displayCard(c){
+	if(!c){
+		return;
+	}
+
+	cdim1.src='files/pics_mod/'+c.passcode+'.jpg';
+
+	cdta1.value='';
+
+	if(c.type=='monster'){
+		cdta1.value+=c.race+' / '+c.subType1+'\n';
+		cdta1.value+=c.attrib+' / '+c.lv+'\n';
+		cdta1.value+='atk: '+c.atk+' / def: '+c.def+'\n\n';
+	}else if(c.type=='magic' || c.type=='trap'){
+		cdta1.value+=c.type+' / '+c.subType1+'\n\n';
+	}
+
+	cdta1.value+=c.desc;
+
+	cdta1.scrollTop=0;
+
+	cd.hidden=false;
 }
 
 function sortPool(){

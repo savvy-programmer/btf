@@ -88,6 +88,10 @@ class Slot{
 		this.div.addEventListener('mousedown',eh);
 	}
 
+	setOnContextMenu(eh){
+		this.div.addEventListener('contextmenu',eh);
+	}
+
 }
 
 export {Slot};
